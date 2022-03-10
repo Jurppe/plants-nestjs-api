@@ -7,4 +7,5 @@ export class Plant {
   last_watered: any;
   watering_period: string;
   user_notes: Array<string>;
+  owner_id: number;
 }
