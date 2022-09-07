@@ -15,7 +15,11 @@ export class PlantsController {
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body(new ValidationPipe) createPlantDto: CreatePlantDto, @Request() req) {
-    return this.plantsService.create(createPlantDto, req.user);
+    const newPlant = this.plantsService.create(createPlantDto, req.user.userId);
+    if (!newPlant) {
+      throw new BadRequestException('Something went wrong upon adding new plant')
+    }
+    return newPlant
   }
   
   @UseGuards(JwtAuthGuard)
@@ -26,15 +30,15 @@ export class PlantsController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  findOne(@Param('id') id: string, @Request() req) {
-    const plant: Plant = this.plantsService.findOne(id, req.user.userId);  
+  async findOne(@Param('id') id: string, @Request() req) {
+    const plant: Plant = await this.plantsService.findOne(id, req.user.userId);  
     if (plant === undefined) {
       throw new BadRequestException('Invalid ID');
     }
     return plant;
   }
 
-  @UseGuards(JwtAuthGuard)
+/*   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async update(@Param('id') id: string, @Body(new ValidationPipe) updatePlantDto: UpdatePlantDto, @Request() req) {
     const plant: Plant = this.plantsService.findOne(id, req.user.userId);  
@@ -42,9 +46,9 @@ export class PlantsController {
       throw new BadRequestException('Invalid ID');
     }
     return this.plantsService.update(id, updatePlantDto, req.user.userId);
-  }
+  } */
 
-  @UseGuards(JwtAuthGuard)
+/*   @UseGuards(JwtAuthGuard)
   @Patch(':id/newnote')
   async addNote(@Param('id') id: string, @Body(new ValidationPipe) newNote: { message: string }, @Request() req) {
     const plant: Plant = this.plantsService.findOne(id, req.user.userId);  
@@ -56,7 +60,7 @@ export class PlantsController {
     }
     
     return this.plantsService.addNote(id, newNote, req.user.userId);
-  }
+  } */
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id/waternow')
@@ -68,21 +72,23 @@ export class PlantsController {
       throw new BadRequestException('Invalid ID');
     }
     
-    return {
-      message: "success",
-      object : {
-        ...returnObj
-      }
-    };
+    return returnObj;
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string, @Request() req) {
-    const plant: Plant = this.plantsService.findOne(id, req.user.userId);  
-    if (plant === undefined) {
-      throw new BadRequestException('Invalid ID');
-    }
-    return this.plantsService.remove(id, req.user.userId);
+  async remove(@Param('id') id: string, @Request() req) {
+    return this.plantsService.remove(id, req.user.userId)
+    .then(() => {
+      return {
+        deleted: true
+      }
+    })
+    .catch((error) => {
+      return {
+        deleted: false,
+        error
+      }
+    })
   }
 }

@@ -1,4 +1,4 @@
-import { IsString, IsDateString, IsUrl, IsNotEmpty, IsOptional, IsNumber } from 'class-validator';
+import { IsString, IsDateString, IsUrl, IsNotEmpty, IsOptional, IsNumber, Matches, IsIn } from 'class-validator';
 
 export class CreatePlantDto {
   @IsString()
@@ -21,11 +21,7 @@ export class CreatePlantDto {
   @IsOptional()
   last_watered: Date;
 
-  @IsString()
+  @IsIn(['daily', 'weekly', 'monthly'])
   @IsNotEmpty()
-  watering_period: 'daily' | 'weekly' | 'monthly';
-
-  @IsNotEmpty()
-  @IsNumber()
-  owner_id: number;
+  watering_period: string;
 }
