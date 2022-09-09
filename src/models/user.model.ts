@@ -12,6 +12,9 @@ export class User extends Model {
   
   @Column
   name: string;
+
+  @Column
+  password_hash: string;
   
   @HasMany(() => Plant)
   plants: Plant[]

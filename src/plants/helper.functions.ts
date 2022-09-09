@@ -1,3 +1,5 @@
+import bcrypt from 'bcrypt';
+
 export const DateDiff = {
 
   inDays: function (d1: Date, d2: Date) {
@@ -58,4 +60,13 @@ export const DateDiff = {
       }
     }
   }
+}
+
+export const hash = async (password: string) => {
+  const saltOrRounds = 10;
+  return await bcrypt.hash(password, saltOrRounds);
+}
+
+export const compareHashes = async (password: string, hash: string) => {
+  return await bcrypt.compare(password, hash)
 }

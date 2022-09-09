@@ -9,6 +9,8 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Plant } from './models/plant.model';
+import { Note } from './models/notes.model';
+import { User } from './models/user.model';
 
 @Module({
   imports: [PlantsModule, AuthModule, UsersModule,
@@ -19,7 +21,7 @@ import { Plant } from './models/plant.model';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE_DEFAULT,
-      models: [Plant],
+      models: [Plant, Note, User],
     }),],
   controllers: [AppController],
   providers: [AppService],
